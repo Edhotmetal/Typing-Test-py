@@ -186,12 +186,6 @@ class Test_UI(QWidget):
                     self.test_complete = True
                     self.end_test()
 
-    def input_cursor_position_changed(self):
-        #TODO
-        # Called when the cursor position in the input field changes
-        # Hopefully I can prevent cheating??
-        print("Are you trying to cheat??")
-
     def begin_test(self):
         # TODO
         # Called when the user begins typing
