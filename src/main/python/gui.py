@@ -11,6 +11,7 @@ class Test_UI(QWidget):
     test_complete = False # Record whether the test was completed or interrupted
 
     input_field = None
+    sample_text = None
     toggle_button = None
 
     def __init__(self):
@@ -45,6 +46,7 @@ class Test_UI(QWidget):
 
         # Display the sample text at the top
         # TODO: Make a nice font
+        global sample_text
         sample_text = QLabel("Sample Text Goes Here!😎")
         sample_text.setWordWrap(True)
         test_layout.addWidget(sample_text, 0, 1)
@@ -118,7 +120,7 @@ class Test_UI(QWidget):
         #TODO
         # Called when the user activates the stats button
         # It opens a new window displaying the user's overall statistics
-        print("You clicked the status button!!!")
+        print("You clicked the stats button!!!")
 
     def help_button_clicked(self):
         #TODO
@@ -131,11 +133,19 @@ class Test_UI(QWidget):
         # Called when the user changes the text in the input field
         # I need this to check if the user has completed the test
         print("You entered a character!")
-        global input_field
-        if(len(self.input_field.toPlainText()) == len(self.sample_text.text())):
-            global test_complete
-            test_complete = True
-            self.end_test()
+        global test_in_progress
+        # TODO SCOPE SHENANIGANS
+        print("The test is in progress: {0}".format(test_in_progress))
+        if(not test_in_progress):
+            self.begin_test()
+        else:
+            global input_field
+            global sample_text
+            print("input: {0}\nsample: {0}".format(len(input_field.toPlainText()), len(sample_text.text())))
+            if(len(input_field.toPlainText()) >= len(sample_text.text())):
+                global test_complete
+                test_complete = True
+                self.end_test()
 
     def input_cursor_position_changed(self):
         #TODO
@@ -143,6 +153,13 @@ class Test_UI(QWidget):
         # Hopefully I can prevent cheating??
         print("Are you trying to cheat??")
 
+    def begin_test(self):
+        # TODO
+        # Called when the user begins typing
+        # Starts the timer
+        print("Beginning test!")
+        global test_in_progress
+        test_in_progress = True
 
     def end_test(self):
         # Called when the user activates the toggle button when the test is running
@@ -158,6 +175,8 @@ class Test_UI(QWidget):
         # Refreshes the sample text and resets the statistics
         #TODO: Actually restart the test
         print("Restarting the test")
+        global test_complete
+        test_complete = False
         
 
 # if this file has been executed
