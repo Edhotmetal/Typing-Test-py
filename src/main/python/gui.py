@@ -14,6 +14,10 @@ class Test_UI(QWidget):
     sample_text = None
     toggle_button = None
 
+    wpm = None
+    words_typed = None
+    accuracy = None
+
     def __init__(self):
         super().__init__()
 
@@ -58,10 +62,15 @@ class Test_UI(QWidget):
         test_layout.addWidget(status_label, 0, 2)
 
         # Create a timer display on the left
+        # Create a label for the timer
+        # TODO font!
         timer_label = QLabel("TIMER")
 
+        # Create a display for the timer
+        # TODO font!
         timer_display = QLabel("00:00")
 
+        # Layout for the two timer labels
         timer_layout = QVBoxLayout()
         timer_layout.addWidget(timer_label)
         timer_layout.addWidget(timer_display)
@@ -77,6 +86,21 @@ class Test_UI(QWidget):
         input_field.textChanged.connect(self.input_text_changed)
         input_field.cursorPositionChanged.connect(self.input_cursor_position_changed)
         test_layout.addWidget(input_field, 1, 1)
+
+        # Create a layout for the users's statistics on the right
+        stats_layout = QGridLayout()
+        global wpm, words_typed, accuracy
+        wpm = QLabel("WPM: 0")
+
+        words_typed = QLabel("Words Typed: 0")
+
+        accuracy = QLabel("Accuracy: N/A")
+
+        stats_layout.addWidget(wpm)
+        stats_layout.addWidget(words_typed, 0, 1)
+        stats_layout.addWidget(accuracy, 1, 0)
+
+        test_layout.addLayout(stats_layout, 1, 2)
 
         # Create a layout for the buttons on the bottom
         button_layout = QHBoxLayout()
@@ -143,14 +167,17 @@ class Test_UI(QWidget):
         # Called when the user changes the text in the input field
         # I need this to check if the user has completed the test
         print("You entered a character!")
-        print("The test is in progress: {0}".format(self.test_in_progress))
-        if(not self.test_in_progress):
+        global input_field
+        input_length = len(input_field.toPlainText())
+
+        # Make sure the test starts only when the user starts typing
+        # because this method is also called when restart_test() clears the input field
+        if(not self.test_in_progress and input_length != 0):
             self.begin_test()
         else:
-            print("input: {0}\nsample: {1}".format(len(input_field.toPlainText()), len(sample_text.text())))
-            if(len(input_field.toPlainText()) >= len(sample_text.text())):
-                global test_complete
-                test_complete = True
+            print("input: {0}\nsample: {1}".format(input_length, len(sample_text.text())))
+            if(input_length >= len(sample_text.text())):
+                self.test_complete = True
                 self.end_test()
 
     def input_cursor_position_changed(self):
