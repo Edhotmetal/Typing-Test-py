@@ -1,9 +1,9 @@
 # import widgets: buttons, labels, etc
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTime, QTimer
 from PyQt5.QtGui import QPalette, QFont
 
-import sys
+import sys, math
 
 class Test_UI(QWidget):
 
@@ -18,6 +18,9 @@ class Test_UI(QWidget):
     words_typed = None
     accuracy = None
 
+    timer = None
+    start_time = None
+    timer_display = None
     def __init__(self):
         super().__init__()
 
@@ -68,7 +71,8 @@ class Test_UI(QWidget):
 
         # Create a display for the timer
         # TODO font!
-        timer_display = QLabel("00:00")
+        global timer_display
+        timer_display = QLabel("0.0")
 
         # Layout for the two timer labels
         timer_layout = QVBoxLayout()
@@ -84,7 +88,6 @@ class Test_UI(QWidget):
         input_field.setAutoFormatting(QTextEdit.AutoNone)
         input_field.setTextInteractionFlags(Qt.TextEditable)
         input_field.textChanged.connect(self.input_text_changed)
-        input_field.cursorPositionChanged.connect(self.input_cursor_position_changed)
         test_layout.addWidget(input_field, 1, 1)
 
         # Create a layout for the users's statistics on the right
@@ -195,6 +198,13 @@ class Test_UI(QWidget):
         global toggle_button
         toggle_button.setText("&End Test")
 
+        # Start the timer
+        global timer, start_time
+        start_time = QTime.currentTime()
+        timer = QTimer()
+        timer.timeout.connect(self.update_timer)
+        timer.start(10)
+
     def end_test(self):
         # Called when the user activates the toggle button when the test is running
         # Or when the user completes the test
@@ -206,6 +216,8 @@ class Test_UI(QWidget):
         toggle_button.setText("&Restart") 
         global input_field
         input_field.setTextInteractionFlags(Qt.NoTextInteraction)
+        global timer
+        timer.stop()
 
     def restart_test(self):
         # Called when the user activates the toggle button when the test is not running
@@ -213,9 +225,28 @@ class Test_UI(QWidget):
         #TODO: Actually restart the test
         print("Restarting the test")
         self.test_complete = False
-        global input_field
+        global input_field, timer_display
         input_field.clear()
         input_field.setTextInteractionFlags(Qt.TextEditable)
+        timer_display.setText("0")
+
+    def update_timer(self):
+        # Called each time the timer fires
+        # updates the timer display
+        
+        # Calculate difference between now and the start of the test
+        # and update the timer display
+        now = QTime.currentTime()
+        msecs_elapsed = start_time.msecsTo(now)
+        global timer_display
+        timer_display.setText("{:.1f}".format(msecs_elapsed/1000))
+
+    def calc_stats(self):
+        #TODO
+        # Calculate the user's statistics at the end of the test
+        # Also calculate overall statistics for display in the stats window
+        print("Calculating statistics")
+
         
 
 # if this file has been executed
