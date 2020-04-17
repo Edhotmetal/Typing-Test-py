@@ -167,18 +167,24 @@ class Test_UI(QWidget):
         # Called when the user changes the text in the input field
         # I need this to check if the user has completed the test
         print("You entered a character!")
-        global input_field
-        input_length = len(input_field.toPlainText())
+        global input_field, words_typed, sample_text
+        text = input_field.toPlainText()
+        sample = sample_text.text()
+        # Display how many words the user has typed compared to the sample text
+        words_typed.setText("Words Typed: {0}/{1}".format(str(len(text.split())),
+            str(len(sample.split()))))
 
         # Make sure the test starts only when the user starts typing
         # because this method is also called when restart_test() clears the input field
-        if(not self.test_in_progress and input_length != 0):
+        if(not self.test_in_progress and len(text) != 0):
             self.begin_test()
         else:
-            print("input: {0}\nsample: {1}".format(input_length, len(sample_text.text())))
-            if(input_length >= len(sample_text.text())):
-                self.test_complete = True
-                self.end_test()
+            # Check if the user has typed enough words
+            if(len(text.split()) >= len(sample.split())):
+                # check if the last word is complete
+                if(len(text.split()[-1]) >= len(sample.split()[-1])):
+                    self.test_complete = True
+                    self.end_test()
 
     def input_cursor_position_changed(self):
         #TODO
