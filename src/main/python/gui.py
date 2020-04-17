@@ -57,12 +57,23 @@ class Test_UI(QWidget):
         status_label.setWordWrap(True)
         test_layout.addWidget(status_label, 0, 2)
 
+        # Create a timer display on the left
+        timer_label = QLabel("TIMER")
+
+        timer_display = QLabel("00:00")
+
+        timer_layout = QVBoxLayout()
+        timer_layout.addWidget(timer_label)
+        timer_layout.addWidget(timer_display)
+        test_layout.addLayout(timer_layout, 1, 0)
+
         # Create an input area for the user to type
         global input_field
         input_field = QTextEdit()
         input_field.setPlaceholderText("Start typing here!")
         input_field.setAcceptRichText(False)
         input_field.setAutoFormatting(QTextEdit.AutoNone)
+        input_field.setTextInteractionFlags(Qt.TextEditable)
         input_field.textChanged.connect(self.input_text_changed)
         input_field.cursorPositionChanged.connect(self.input_cursor_position_changed)
         test_layout.addWidget(input_field, 1, 1)
@@ -73,7 +84,7 @@ class Test_UI(QWidget):
         # Create test toggle button
         # This button displays Restart or Finish depending on the test status
         global toggle_button
-        toggle_button = QPushButton("Toggle")
+        toggle_button = QPushButton("&Restart")
         # connect the toggle button to its method
         toggle_button.clicked.connect(self.toggle_button_clicked)
         # Add the toggle button to its layout
@@ -109,9 +120,8 @@ class Test_UI(QWidget):
         # When the test is in progress, end the test
         # If the test is not in progress, restart the test
         print("You clicked the toggle button!!!!")
-        global test_in_progress
 
-        if(test_in_progress):
+        if(self.test_in_progress):
             self.end_test()
         else:
             self.restart_test()
@@ -133,15 +143,11 @@ class Test_UI(QWidget):
         # Called when the user changes the text in the input field
         # I need this to check if the user has completed the test
         print("You entered a character!")
-        global test_in_progress
-        # TODO SCOPE SHENANIGANS
-        print("The test is in progress: {0}".format(test_in_progress))
-        if(not test_in_progress):
+        print("The test is in progress: {0}".format(self.test_in_progress))
+        if(not self.test_in_progress):
             self.begin_test()
         else:
-            global input_field
-            global sample_text
-            print("input: {0}\nsample: {0}".format(len(input_field.toPlainText()), len(sample_text.text())))
+            print("input: {0}\nsample: {1}".format(len(input_field.toPlainText()), len(sample_text.text())))
             if(len(input_field.toPlainText()) >= len(sample_text.text())):
                 global test_complete
                 test_complete = True
@@ -158,25 +164,31 @@ class Test_UI(QWidget):
         # Called when the user begins typing
         # Starts the timer
         print("Beginning test!")
-        global test_in_progress
-        test_in_progress = True
+        self.test_in_progress = True
+        global toggle_button
+        toggle_button.setText("&End Test")
 
     def end_test(self):
         # Called when the user activates the toggle button when the test is running
+        # Or when the user completes the test
         # Stops the test
         #TODO: do something with the timer
         print("Ending the test")
-        global test_in_progress
-        test_in_progress = False
-        self.toggle_button.setText("Restart") 
+        self.test_in_progress = False
+        global toggle_button
+        toggle_button.setText("&Restart") 
+        global input_field
+        input_field.setTextInteractionFlags(Qt.NoTextInteraction)
 
     def restart_test(self):
         # Called when the user activates the toggle button when the test is not running
         # Refreshes the sample text and resets the statistics
         #TODO: Actually restart the test
         print("Restarting the test")
-        global test_complete
-        test_complete = False
+        self.test_complete = False
+        global input_field
+        input_field.clear()
+        input_field.setTextInteractionFlags(Qt.TextEditable)
         
 
 # if this file has been executed
