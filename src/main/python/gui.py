@@ -21,6 +21,8 @@ class Test_UI(QWidget):
     timer = None
     start_time = None
     timer_display = None
+
+    status_label = None
     def __init__(self):
         super().__init__()
 
@@ -60,6 +62,7 @@ class Test_UI(QWidget):
 
         # Display the test status at the top right
         # TODO nice font for status
+        global status_label
         status_label = QLabel("Test Status Goes Here!😀")
         status_label.setWordWrap(True)
         test_layout.addWidget(status_label, 0, 2)
@@ -190,9 +193,10 @@ class Test_UI(QWidget):
                     self.end_test()
 
     def begin_test(self):
-        # TODO
         # Called when the user begins typing
         # Starts the timer
+        # TODO Make a progress bar in the status pane
+
         print("Beginning test!")
         self.test_in_progress = True
         global toggle_button
@@ -204,12 +208,13 @@ class Test_UI(QWidget):
         timer = QTimer()
         timer.timeout.connect(self.update_timer)
         timer.start(10)
+        status_label.setText("Test in progress!🤨")
 
     def end_test(self):
         # Called when the user activates the toggle button when the test is running
         # Or when the user completes the test
         # Stops the test
-        #TODO: do something with the timer
+
         print("Ending the test")
         self.test_in_progress = False
         global toggle_button
@@ -218,6 +223,9 @@ class Test_UI(QWidget):
         input_field.setTextInteractionFlags(Qt.NoTextInteraction)
         global timer
         timer.stop()
+        self.calc_stats()
+        # TODO Change the test status message according to the user's performance
+        status_label.setText("Nice work!")
 
     def restart_test(self):
         # Called when the user activates the toggle button when the test is not running
@@ -229,6 +237,7 @@ class Test_UI(QWidget):
         input_field.clear()
         input_field.setTextInteractionFlags(Qt.TextEditable)
         timer_display.setText("0")
+        status_label.setText("Get ready for the test!")
 
     def update_timer(self):
         # Called each time the timer fires
@@ -242,11 +251,21 @@ class Test_UI(QWidget):
         timer_display.setText("{:.1f}".format(msecs_elapsed/1000))
 
     def calc_stats(self):
-        #TODO
         # Calculate the user's statistics at the end of the test
         # Also calculate overall statistics for display in the stats window
+        #TODO
+        # Calculate accuracy
+        # Calculate overall statistics
         print("Calculating statistics")
 
+        # Calculate WPM
+        # Get the # of words typed by the user
+        global input_field
+        num_words = len(input_field.toPlainText().split())
+        global timer_display
+        time_elapsed = float(timer_display.text())
+        global wpm
+        wpm.setText("WPM: {:.2f}".format(num_words/(time_elapsed / 60)))
         
 
 # if this file has been executed
