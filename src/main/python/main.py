@@ -87,10 +87,14 @@ class Test_UI(QWidget):
         timer_display.setFont(timer_font)
 
         # Layout for the two timer labels
+        timer_box = QGroupBox()
+        timer_box.setTitle("Time")
+
         timer_layout = QVBoxLayout()
-        timer_layout.addWidget(timer_label)
         timer_layout.addWidget(timer_display)
-        test_layout.addLayout(timer_layout, 1, 0)
+        timer_box.setLayout(timer_layout)
+        test_layout.addWidget(timer_box, 1, 0)
+
 
         # Create an input area for the user to type
         global input_field
@@ -103,7 +107,9 @@ class Test_UI(QWidget):
         test_layout.addWidget(input_field, 1, 1)
 
         # Create a layout for the users's statistics on the right
-        stats_layout = QGridLayout()
+        stats_box = QGroupBox()
+        stats_box.setTitle("Statistics")
+        stats_layout = QVBoxLayout()
         global wpm_label, words_typed, accuracy_label
         wpm_label = QLabel("WPM: 0")
 
@@ -112,10 +118,11 @@ class Test_UI(QWidget):
         accuracy_label = QLabel("Accuracy: N/A")
 
         stats_layout.addWidget(wpm_label)
-        stats_layout.addWidget(words_typed, 0, 1)
-        stats_layout.addWidget(accuracy_label, 1, 0)
+        stats_layout.addWidget(words_typed)
+        stats_layout.addWidget(accuracy_label)
 
-        test_layout.addLayout(stats_layout, 1, 2)
+        stats_box.setLayout(stats_layout)
+        test_layout.addWidget(stats_box, 1, 2)
 
         # Create a layout for the buttons on the bottom
         button_layout = QHBoxLayout()
