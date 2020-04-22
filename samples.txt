@@ -2,7 +2,7 @@ I like typing tests
 lass sass al as al sass lass
 ;; aa ss ll ;; sla ss a;;ll ss als
 The best kind of test is a challenging test
-Men don't define acronyms, they understand them genetically
+Men don't define acronymns, they understand them genetically
 The quick brown fox jumps over the lazy dog
 Free shipping on everything! Buy now!
 You better not be trying to cheat on this test

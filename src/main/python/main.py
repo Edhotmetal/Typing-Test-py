@@ -46,8 +46,6 @@ class Test_UI(QWidget):
 
         # Create a grid layout for the test
         test_layout = QGridLayout()
-        # Prevent the center column from expanding
-        test_layout.setColumnStretch(1, 0)
 
         # Create a title on the top left of the grid layout
         title_font = QFont("Source Code Pro", 24, 1, True)
@@ -76,15 +74,16 @@ class Test_UI(QWidget):
         # Create a timer display on the left
         # Create a label for the timer
         # TODO font!
+        timer_font = QFont("Source Code Pro", 24, 0, True)
         timer_label = QLabel("TIMER")
         timer_label.setAlignment(Qt.AlignCenter)
+        timer_label.setFont(timer_font)
 
         # Create a display for the timer
         # TODO font!
         global timer_display
         timer_display = QLabel("0.0")
         timer_display.setAlignment(Qt.AlignCenter)
-        timer_font = QFont("Source Code Pro", 32, 0, True)
         timer_display.setFont(timer_font)
 
         # Layout for the two timer labels
@@ -147,7 +146,7 @@ class Test_UI(QWidget):
         button_layout.addWidget(help_button)
         
         # display the window
-        self.setGeometry(500,500,700,300)
+        self.setGeometry(500,500,930,370)
         self.setWindowTitle("Typing Test")
         main_layout.addLayout(test_layout)
         main_layout.addLayout(button_layout)
@@ -243,7 +242,7 @@ class Test_UI(QWidget):
             status_label.setText("Too many words! Try again!")
         elif(self.wpm > 88.0):
             status_label.setText("You went over 88 WPM!!!")
-        elif(self.accuracy == 100):
+        elif(int(self.accuracy) == 100):
             status_label.setText("PERFECT!🎉")
         else:
             status_label.setText("Test Complete!")
@@ -289,6 +288,29 @@ class Test_UI(QWidget):
         global wpm_label
         self.wpm = self.num_words/(time_elapsed / 60.0)
         wpm_label.setText("WPM: {:.2f}".format(self.wpm))
+        self.calc_accuracy()
+
+    def calc_accuracy(self):
+        # Calculates the user's accuracy at the end of the test
+        # Compares each word in the input to the sample text
+        print("Calculating accuracy")
+        global input_field, sample_text
+        sample = sample_text.text().split()
+        text = input_field.toPlainText().split()
+        num_correct = 0
+        # Iterate through the sample and compare the words to the input
+        for i in range(0,len(sample)):
+            # The input might have less words than the sample
+            try:
+                if(sample[i] == text[i]):
+                    print(sample[i] + " = " + text[i])
+                    num_correct += 1
+                else:
+                    print(sample[i] + " != " + text[i])
+            except IndexError:
+                print(sample[i] + " = ")
+        self.accuracy = (num_correct/len(sample))*100
+        accuracy_label.setText("Accuracy: {0}%".format(int(self.accuracy)))
 
     def get_new_sample(self):
         # Get a new sample text for the user when the test is restarted
@@ -307,5 +329,6 @@ class Test_UI(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
+    app.setFont(QFont("Source Code Pro", 12, 0, False))
     gui = Test_UI()
     sys.exit(app.exec_())
