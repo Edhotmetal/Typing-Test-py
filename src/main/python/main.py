@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QTime, QTimer
 from PyQt5.QtGui import QPalette, QFont
 
-import sys, math
+import sys, random
 
 class Test_UI(QWidget):
 
@@ -30,6 +30,7 @@ class Test_UI(QWidget):
         super().__init__()
 
         self.init_UI()
+        self.get_new_sample()
 
     def init_UI(self):
         print("Initializing UI")
@@ -45,6 +46,8 @@ class Test_UI(QWidget):
 
         # Create a grid layout for the test
         test_layout = QGridLayout()
+        # Prevent the center column from expanding
+        test_layout.setColumnStretch(1, 0)
 
         # Create a title on the top left of the grid layout
         title_font = QFont("Source Code Pro", 24, 1, True)
@@ -74,11 +77,15 @@ class Test_UI(QWidget):
         # Create a label for the timer
         # TODO font!
         timer_label = QLabel("TIMER")
+        timer_label.setAlignment(Qt.AlignCenter)
 
         # Create a display for the timer
         # TODO font!
         global timer_display
         timer_display = QLabel("0.0")
+        timer_display.setAlignment(Qt.AlignCenter)
+        timer_font = QFont("Source Code Pro", 32, 0, True)
+        timer_display.setFont(timer_font)
 
         # Layout for the two timer labels
         timer_layout = QVBoxLayout()
@@ -140,7 +147,7 @@ class Test_UI(QWidget):
         button_layout.addWidget(help_button)
         
         # display the window
-        self.setGeometry(500,500,700,250)
+        self.setGeometry(500,500,700,300)
         self.setWindowTitle("Typing Test")
         main_layout.addLayout(test_layout)
         main_layout.addLayout(button_layout)
@@ -175,7 +182,6 @@ class Test_UI(QWidget):
         # TODO
         # Called when the user changes the text in the input field
         # I need this to check if the user has completed the test
-        print("You entered a character!")
         global input_field, words_typed, sample_text
         text = input_field.toPlainText()
         sample = sample_text.text()
@@ -239,6 +245,8 @@ class Test_UI(QWidget):
             status_label.setText("You went over 88 WPM!!!")
         elif(self.accuracy == 100):
             status_label.setText("PERFECT!🎉")
+        else:
+            status_label.setText("Test Complete!")
 
     def restart_test(self):
         # Called when the user activates the toggle button when the test is not running
@@ -251,6 +259,7 @@ class Test_UI(QWidget):
         input_field.setTextInteractionFlags(Qt.TextEditable)
         timer_display.setText("0")
         status_label.setText("Get ready for the test!")
+        self.get_new_sample()
 
     def update_timer(self):
         # Called each time the timer fires
@@ -278,8 +287,19 @@ class Test_UI(QWidget):
         global timer_display
         time_elapsed = float(timer_display.text())
         global wpm_label
-        self.wpm = num_words/(time_elapsed / 60.0)
+        self.wpm = self.num_words/(time_elapsed / 60.0)
         wpm_label.setText("WPM: {:.2f}".format(self.wpm))
+
+    def get_new_sample(self):
+        # Get a new sample text for the user when the test is restarted
+        # This method gets a random line of text from samples.txt
+        sample_file = open("./samples.txt", 'r')
+        samples = sample_file.readlines()
+        lines=[]
+        for line in samples:
+            lines.append(line[:-1])
+        sample_text.setText(random.choice(lines))
+        sample_file.close()
 
 
 # if this file has been executed
