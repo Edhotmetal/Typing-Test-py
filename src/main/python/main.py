@@ -60,27 +60,21 @@ class Test_UI(QWidget):
         # Display the sample text at the top
         # TODO: Make a nice font
         global sample_text
-        sample_text = QLabel("Sample Text Goes Here!😎")
+        sample_text = QLabel()
         sample_text.setWordWrap(True)
         test_layout.addWidget(sample_text, 0, 1)
 
         # Display the test status at the top right
         # TODO nice font for status
         global status_label
-        status_label = QLabel("Test Status Goes Here!😀")
+        status_label = QLabel("Get ready for the test!")
         status_label.setWordWrap(True)
         test_layout.addWidget(status_label, 0, 2)
 
         # Create a timer display on the left
         # Create a label for the timer
-        # TODO font!
         timer_font = QFont("Source Code Pro", 24, 0, True)
-        timer_label = QLabel("TIMER")
-        timer_label.setAlignment(Qt.AlignCenter)
-        timer_label.setFont(timer_font)
 
-        # Create a display for the timer
-        # TODO font!
         global timer_display
         timer_display = QLabel("0.0")
         timer_display.setAlignment(Qt.AlignCenter)
@@ -176,7 +170,23 @@ class Test_UI(QWidget):
         #TODO
         # Called when the user activates the stats button
         # It opens a new window displaying the user's overall statistics
-        print("You clicked the stats button!!!")
+
+        # Create the statistics dialog
+        stats_window = QWidget()
+        stats_window.setWindowTitle("Statistics")
+        stats_layout = QVBoxLayout()
+
+        # Create the stats table
+        table = QTableWidget(2, 4)
+        table.setItem(0,1, QTableWidgetItem("Time"))
+        table.setItem(1,0, QTableWidgetItem("Average"))
+        table.setItem(1,1, QTableWidgetItem(timer_display.text()))
+
+        stats_layout.addWidget(table)
+        stats_window.setLayout(stats_layout)
+
+        stats_window.show()
+        stats_window.setVisible(True)
 
     def help_button_clicked(self):
         #TODO
@@ -184,8 +194,15 @@ class Test_UI(QWidget):
         # Opens a new window displaying helpful information
         print("You clicked the help button!!!!")
 
+        # Create the help window dialog
+        help_window = QMessageBox()
+        help_message = "This is a really helpful help message"
+        help_window.setText("Help!")
+        help_window.setInformativeText(help_message)
+        help_window.setWindowModality(Qt.NonModal)
+        help_window.exec_()
+
     def input_text_changed(self):
-        # TODO
         # Called when the user changes the text in the input field
         # I need this to check if the user has completed the test
         global input_field, words_typed, sample_text
@@ -248,7 +265,7 @@ class Test_UI(QWidget):
         if(len(input_field.toPlainText().split()) > len(sample_text.text().split())):
             status_label.setText("Too many words! Try again!")
         elif(self.wpm > 88.0):
-            status_label.setText("You went over 88 WPM!!!")
+            status_label.setText("You typed faster than 88 WPM!!!")
         elif(int(self.accuracy) == 100):
             status_label.setText("PERFECT!🎉")
         else:
@@ -338,4 +355,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setFont(QFont("Source Code Pro", 12, 0, False))
     gui = Test_UI()
+
     sys.exit(app.exec_())
