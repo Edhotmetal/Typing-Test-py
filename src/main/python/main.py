@@ -38,7 +38,7 @@ class Test_UI(QWidget):
         #TODO: Set palette colors here!
 
         #TODO: set stylesheets
-        # app.setStyleSheet("QPushButton { margin: 10ex; }")
+        app.setStyleSheet("QTextEdit { margin: 20%; }")
 
         # Create a vertical layout with 2 rows
         # the top will contain the test and bottom will contain the buttons
@@ -147,7 +147,7 @@ class Test_UI(QWidget):
         button_layout.addWidget(help_button)
         
         # display the window
-        self.setGeometry(500,500,930,370)
+        self.setGeometry(500,500,1000,450)
         self.setWindowTitle("Typing Test")
         main_layout.addLayout(test_layout)
         main_layout.addLayout(button_layout)
@@ -196,7 +196,11 @@ class Test_UI(QWidget):
 
         # Create the help window dialog
         help_window = QMessageBox()
-        help_message = "This is a really helpful help message"
+        help_message = '''<h1>This is a really helpful help message</h1>
+        <p>Begin typing to start the test!</p>
+        <p>The timer will begin counting and the test will end when you type the last word</p>
+        <p>You can also end the test at any time by clicking the end test button that will appear
+        at the bottom</p>'''
         help_window.setText("Help!")
         help_window.setInformativeText(help_message)
         help_window.setWindowModality(Qt.NonModal)
@@ -299,7 +303,6 @@ class Test_UI(QWidget):
         # Calculate the user's statistics at the end of the test
         # Also calculate overall statistics for display in the stats window
         #TODO
-        # Calculate accuracy
         # Calculate overall statistics
         print("Calculating statistics")
 
