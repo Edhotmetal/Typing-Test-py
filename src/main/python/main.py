@@ -196,12 +196,14 @@ class Test_UI(QWidget):
 
         # Create the help window dialog
         help_window = QMessageBox()
-        help_message = '''<h1>This is a really helpful help message</h1>
-        <p>Begin typing to start the test!</p>
-        <p>The timer will begin counting and the test will end when you type the last word</p>
-        <p>You can also end the test at any time by clicking the end test button that will appear
-        at the bottom</p>'''
-        help_window.setText("Help!")
+        help_message = '''
+        <p>A sample phrase that you must type is displayed at the top of the window<br>
+        Begin typing and the timer will begin counting!<br>
+        See how fast you can complete each test!<p>
+        <p><b>Problems or questions?</b></p>
+        <p>Contact the author at <a href="edhotmetal@protonmail.com">edhotmetal@protonmail.com</a></p>'''
+
+        help_window.setText("<h1>Need some help?</h1>")
         help_window.setInformativeText(help_message)
         help_window.setWindowModality(Qt.NonModal)
         help_window.exec_()
